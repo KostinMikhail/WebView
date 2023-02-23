@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Fragment</string>
+    <string name="pubg">PUBG</string>
+    <string name="brawl">Brawl Stars</string>
+    <string name="genshin">Genshin Impact</string>
+    <string name="candy">Candy Crush</string>
+    <string name="Homescapes">Homescapes</string>
+    <string name="ClashRoyal">ClashRoyal</string>
+</resources>
