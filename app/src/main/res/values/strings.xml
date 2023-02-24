@@ -1,9 +1,55 @@
 <resources>
-    <string name="app_name">Fragment</string>
+    <string name="app_name">Games lifehacks</string>
     <string name="pubg">PUBG</string>
     <string name="brawl">Brawl Stars</string>
     <string name="genshin">Genshin Impact</string>
     <string name="candy">Candy Crush</string>
     <string name="Homescapes">Homescapes</string>
     <string name="ClashRoyal">ClashRoyal</string>
+    <string name="pubgTip">Dont be afraid to hide out in the blue early on.
+        \nTerrain can be just as good cover as any building or wall.
+        \nALWAYS take a level three helmet
+        \nbut sometimes leave a level three vest.
+        \nPlay the edge of the circle.
+        \nKeep yourself boosted up late game.
+        \nHiding in bushes works surprisingly well.</string>
+    <string name="brawlTip">Always be aware of your surroundings in game modes
+        \nStudy any all star player climb to learn the best moves from fellow players
+        \nStay alert and stay ahead of the game!
+        \ncollect power ups
+        \nupgrade brawlers collect unique skins
+        \nclear paths to the enemies treasure
+        \nachieve a star player climb up local and regional leaderboards
+    </string>
+    <string name="clashTip">Be sure to have a powerful deck
+        \nIf you are stuck with a bad hand, wait for your opponent to make the first move
+        \nStay alert and stay ahead of the game!
+        \nChoose a crown tower to focus on and continue attacking it.
+        \nGet positive elixir trades.
+        \nPrepare powerful combinations of troops
+        \nUse less reliable ways to win or lose quickly.
+    </string>
+    <string name="homeTip">Take a good look at the game field before starting
+        \nIf you are stuck with a bad hand, wait for your opponent to make the first move
+        \nStay alert and stay ahead of the game
+        \nChoose a crown tower to focus on and continue attacking it
+        \nSometimes you should ignore the games prompts
+        \nCombine powerups
+        \nGet help from other players in our fan group
+    </string>
+    <string name="genshinTip">Conserve Fragile Resin Until the Late Game
+        \nDevelop Your Serenitea Pot
+        \nStay alert and stay ahead of the game!
+        \nTake Advantage of the Reputation System
+        \nGet positive elixir trades.
+        \nSkip the Weapon Banner
+    </string>
+    <string name="candyTip">Start your candy crushing at the bottom
+        \nTry to think ahead when possible
+        \nStay alert and stay ahead of the game!
+        \nLearn how to make, and use special candies
+        \nLook for combos, and use the best ones
+        \nUse and make striped candy the right way
+        \nPrioritize specific threats at each level
+    </string>
 </resources>
