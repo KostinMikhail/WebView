@@ -16,7 +16,6 @@ class ClashFragment : Fragment(R.layout.fragment_clash) {
     ): View? {
 
         return super.onCreateView(inflater, container, savedInstanceState)
-
     }
 
     companion object {
