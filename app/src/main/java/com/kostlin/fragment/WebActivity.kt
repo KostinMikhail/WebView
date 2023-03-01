@@ -2,26 +2,21 @@ package com.kostlin.fragment
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
+
 import android.telephony.TelephonyManager
 import android.view.View
 import android.webkit.*
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import com.kostlin.fragment.databinding.FragmentMainBinding
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 
-
-class SpashScreenActivity : AppCompatActivity() {
-
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
+class WebActivity : AppCompatActivity() {
 
     private var webView: WebView? = null
 
@@ -29,6 +24,39 @@ class SpashScreenActivity : AppCompatActivity() {
     private val prefManager: SharedPreferencesManager
         get() = _prefManager!!
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        webView?.restoreState(savedInstanceState)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_web)
+
+        _prefManager = SharedPreferencesManager(this)
+        checkFirebaseUrl()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        webView?.saveState(outState)
+    }
+
+    override fun onStop() {
+        CookieManager.getInstance().flush()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        _prefManager = null
+        webView = null
+        super.onDestroy()
+    }
+
+    private fun startStub(){
+        startActivity(Intent(this,MainActivity::class.java))
+        finish()
+    }
 
     private fun checkFirebaseUrl() {
         //Получаем ссылку их локального хранилища
@@ -38,14 +66,14 @@ class SpashScreenActivity : AppCompatActivity() {
             //Настраиваем конфиг FirebaseRemote
             val remoteConfig = Firebase.remoteConfig.apply {
                 setConfigSettingsAsync(remoteConfigSettings {
-                    fetchTimeoutInSeconds = 3
+                    fetchTimeoutInSeconds = 60
                 })
             }
             //Ставим слушатель на получение ссылки из FirebaseRemote
             remoteConfig.fetchAndActivate().addOnSuccessListener {
                 //Здесь мы получили ссылку по уникальному тегу
                 //Тег должен быть одинаковым в проекте и в Firebase
-                val webUrl = remoteConfig.getString(WebActivity.FIREBASE_URL_TAG)
+                val webUrl = remoteConfig.getString(FIREBASE_URL_TAG)
                 //Проверяем если значение не пустое, то есть пришла реальная ссылка
                 if (webUrl.isNotEmpty()) {
                     //Сохраняем ссылку в локальное хранилище
@@ -70,7 +98,7 @@ class SpashScreenActivity : AppCompatActivity() {
         // 3) Проверяет соединение с интернетом
         if (isSIMInserted() && isRealDevice() && isNetworkAvailable()) {
             //Настраиваем WebView
-            //   webView = findViewById(R.id.web_browser)
+           // webView = findViewById(R.id.web_browser)
             webView!!.apply {
                 CookieManager.getInstance().setAcceptThirdPartyCookies(this, true);
                 settings.apply {
@@ -79,6 +107,7 @@ class SpashScreenActivity : AppCompatActivity() {
                     useWideViewPort = true
                     databaseEnabled = true
                     javaScriptCanOpenWindowsAutomatically = true
+
                     cacheMode = WebSettings.LOAD_DEFAULT
                 }
                 webViewClient = object : WebViewClient() {
@@ -150,35 +179,16 @@ class SpashScreenActivity : AppCompatActivity() {
         return false
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_spashscreen)
-
-        _prefManager = SharedPreferencesManager(this)
-        checkFirebaseUrl()
-
-
-//        Handler().postDelayed({
-//            if (allowed) {
-//                val intent = Intent(this, MainActivity::class.java)
-//                startActivity(intent)
-//                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-//                finish()
-//
-//            } else {
-//                return@postDelayed
-//            }
-//
-//        }, 3000)
-
-    }
-
-    private fun startStub() {
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+    override fun onBackPressed() {
+        if (webView?.visibility == View.VISIBLE) {
+            webView?.goBack()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     companion object {
-        private const val FIREBASE_URL_TAG = "url_tag"
+        const val FIREBASE_URL_TAG = "FireBaseLink"
     }
+
 }

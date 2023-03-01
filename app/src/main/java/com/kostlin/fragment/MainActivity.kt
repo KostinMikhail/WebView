@@ -1,12 +1,9 @@
 package com.kostlin.fragment
 
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.kostlin.fragment.R.*
-import com.kostlin.fragment.ui.logic.DataTransferClass
 import com.kostlin.fragment.ui.main.MainFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +11,7 @@ import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
 
-    override val coroutineContext : CoroutineContext
+    override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
     val defaults = mapOf(
@@ -22,20 +19,20 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     )
     val basic = defaults["FireBaseLink"].toString()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_main)
         supportActionBar?.hide()
-        val intent = Intent(this, MainFragment::class.java)
-        DataTransferClass.instance!!.setData(basic)
+
+        val fragment = MainFragment()
+        val bundle = Bundle()
+        bundle.putString("FireBaseLink", basic)
+        fragment.arguments = bundle
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
 
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(id.container, MainFragment.newInstance())
-                .commitNow()
-        }
     }
 
 

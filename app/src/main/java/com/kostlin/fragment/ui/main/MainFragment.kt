@@ -1,7 +1,6 @@
 package com.kostlin.fragment.ui.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.kostlin.fragment.R
 import com.kostlin.fragment.databinding.FragmentMainBinding
-import com.kostlin.fragment.ui.logic.DataTransferClass
 
-
-class MainFragment : Fragment(), DataTransferClass.OnClick {
+class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -26,18 +23,16 @@ class MainFragment : Fragment(), DataTransferClass.OnClick {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+        val view = inflater.inflate(R.layout.fragment_main, container, false)
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        DataTransferClass.instance!!.setListener(this)
-
+        val FireBaseLink = arguments?.getString("FireBaseLink")
 
         binding.btnPubg.setOnClickListener {
             val transaction: FragmentTransaction =
@@ -80,11 +75,7 @@ class MainFragment : Fragment(), DataTransferClass.OnClick {
             transaction.add(R.id.container, CandyFragment.newInstance())
             transaction.commit()
         }
-        binding.tvFirebase.setText("")
+
     }
 
-    override fun getData(count: String) {
-        var s = getData("FireBaseLink").toString()
-        binding.tvFirebase.setText(s)
-    }
 }
