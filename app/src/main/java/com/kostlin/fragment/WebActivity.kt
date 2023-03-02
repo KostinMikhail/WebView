@@ -31,7 +31,7 @@ class WebActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_web)
+        setContentView(androidx.core.splashscreen.R.layout.splash_screen_view)
 
         _prefManager = SharedPreferencesManager(this)
         checkFirebaseUrl()
