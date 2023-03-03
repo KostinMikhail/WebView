@@ -24,8 +24,9 @@ class SharedPreferencesManager(context: Context) {
         return pref.getString(SAVED_URL_KEY,"") ?: ""
     }
 
+
     fun putURL(url : String){
-        pref.edit().putString(SAVED_URL_KEY,url)
+        pref.edit().putString(SAVED_URL_KEY,url).apply()
     }
 
 }
