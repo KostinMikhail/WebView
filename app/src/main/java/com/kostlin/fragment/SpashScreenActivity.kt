@@ -10,18 +10,21 @@ import android.os.Bundle
 import android.telephony.TelephonyManager
 import android.view.View
 import android.webkit.*
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import com.kostlin.fragment.databinding.ActivitySpashscreenBinding
 import com.kostlin.fragment.databinding.FragmentMainBinding
 
 
 class SpashScreenActivity : AppCompatActivity() {
 
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
 
+    private var progressBar: ProgressBar? = null
     private var webView: WebView? = null
 
     private var _prefManager: SharedPreferencesManager? = null
@@ -53,7 +56,7 @@ class SpashScreenActivity : AppCompatActivity() {
                     prefManager.putURL(webUrl)
                     //Запускаем WebView
                     setWebView(webUrl)
-                    binding.pb
+                    stopProgressBar()
 
                 } else startStub()
             }
@@ -65,7 +68,10 @@ class SpashScreenActivity : AppCompatActivity() {
             setWebView(savedUrl)
         }
     }
-
+    private fun stopProgressBar() {
+        progressBar = findViewById(R.id.pb)
+        progressBar?.isGone = true
+    }
     private fun setWebView(loadingUrl: String) {
         //Делаем проверку
         // 1) Вставлена ли сим-карта
