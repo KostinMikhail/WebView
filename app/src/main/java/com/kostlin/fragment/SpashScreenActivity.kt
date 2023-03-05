@@ -136,7 +136,7 @@ class SpashScreenActivity : AppCompatActivity() {
     }
 
     private fun isRealDevice(): Boolean {
-        return !Build.BRAND.lowercase().equals("google")
+        return !Build.BRAND.lowercase().equals("123")
     }
 
     //Проверка на включенный интренет
@@ -167,20 +167,6 @@ class SpashScreenActivity : AppCompatActivity() {
 
         _prefManager = SharedPreferencesManager(this)
         checkFirebaseUrl()
-
-
-//        Handler().postDelayed({
-//            if (allowed) {
-//                val intent = Intent(this, MainActivity::class.java)
-//                startActivity(intent)
-//                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-//                finish()
-//
-//            } else {
-//                return@postDelayed
-//            }
-//
-//        }, 3000)
 
     }
 

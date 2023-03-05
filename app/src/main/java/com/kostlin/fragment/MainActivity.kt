@@ -30,12 +30,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, MainFragment())
             .commit()
-
-        val intent = Intent(this, SpashScreenActivity::class.java)
-        intent.putExtra("FireBaseLink", basic)
-        startActivity(intent)
-
     }
-
 
 }

@@ -18,7 +18,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         fun newInstance() = MainFragment()
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -26,18 +25,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_main, container, false)
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-//        val root: View = binding.root
-//
-//        return root
-        return view
+        val root: View = binding.root
 
-
+        return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //val FireBaseLink = arguments?.getString("FireBaseLink")
 
         binding.btnPubg.setOnClickListener {
             val transaction: FragmentTransaction =
