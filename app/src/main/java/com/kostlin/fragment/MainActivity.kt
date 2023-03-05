@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.kostlin.fragment.R.*
+import com.kostlin.fragment.ui.main.MainFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
@@ -25,13 +26,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         setContentView(layout.activity_main)
         supportActionBar?.hide()
 
-//        val activity = MainFragment()
-//        val bundle = Bundle()
-//        bundle.putString("FireBaseLink", basic)
-//        activity.arguments = bundle
-//        supportFragmentManager.beginTransaction()
-//            .replace(R.id.container, activity)
-//            .commit()
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, MainFragment())
+            .commit()
+
         val intent = Intent(this, SpashScreenActivity::class.java)
         intent.putExtra("FireBaseLink", basic)
         startActivity(intent)

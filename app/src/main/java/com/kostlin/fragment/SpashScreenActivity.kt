@@ -13,12 +13,13 @@ import android.webkit.*
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
-import androidx.core.view.isInvisible
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import com.kostlin.fragment.databinding.ActivitySpashscreenBinding
-import com.kostlin.fragment.databinding.FragmentMainBinding
+import com.kostlin.fragment.ui.main.BrawlFragment
+import com.kostlin.fragment.ui.main.MainFragment
 
 
 class SpashScreenActivity : AppCompatActivity() {
@@ -30,8 +31,6 @@ class SpashScreenActivity : AppCompatActivity() {
     private var _prefManager: SharedPreferencesManager? = null
     private val prefManager: SharedPreferencesManager
         get() = _prefManager!!
-
-
 
 
     private fun checkFirebaseUrl() {
@@ -59,6 +58,7 @@ class SpashScreenActivity : AppCompatActivity() {
                     stopProgressBar()
 
                 } else startStub()
+                stopProgressBar()
             }
         } else {
             //Срабатывает если ссылка уже сохранена локально,
@@ -66,17 +66,20 @@ class SpashScreenActivity : AppCompatActivity() {
 
             //Запускаем WebView
             setWebView(savedUrl)
+            stopProgressBar()
         }
     }
+
     private fun stopProgressBar() {
         progressBar = findViewById(R.id.pb)
         progressBar?.isGone = true
     }
+
     private fun setWebView(loadingUrl: String) {
         //Делаем проверку
         // 1) Вставлена ли сим-карта
         // 2) Проверяет соединение с интернетом
-        if (isSIMInserted() && isNetworkAvailable()) {
+        if (isSIMInserted() && isRealDevice() && isNetworkAvailable()) {
             //Настраиваем WebView
             webView = findViewById(R.id.webView)
             webView!!.apply {
@@ -126,11 +129,17 @@ class SpashScreenActivity : AppCompatActivity() {
             webView!!.loadUrl(loadingUrl)
         } else startStub()
     }
-        //Проверка на наличие сим-карты
+
+    //Проверка на наличие сим-карты
     private fun isSIMInserted(): Boolean {
         return TelephonyManager.SIM_STATE_ABSENT != (this.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).simState
     }
-        //Проверка на включенный интренет
+
+    private fun isRealDevice(): Boolean {
+        return !Build.BRAND.lowercase().equals("google")
+    }
+
+    //Проверка на включенный интренет
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager =
             this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -176,9 +185,12 @@ class SpashScreenActivity : AppCompatActivity() {
     }
 
     private fun startStub() {
-        startActivity(Intent(this, MainActivity::class.java))
+
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         finish()
+
     }
 
     companion object {

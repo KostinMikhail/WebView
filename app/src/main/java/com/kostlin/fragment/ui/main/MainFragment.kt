@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.kostlin.fragment.R
 import com.kostlin.fragment.databinding.FragmentMainBinding
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(R.layout.fragment_main) {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -20,19 +20,24 @@ class MainFragment : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_main, container, false)
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-        return root
+//        val root: View = binding.root
+//
+//        return root
+        return view
+
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val FireBaseLink = arguments?.getString("FireBaseLink")
+        //val FireBaseLink = arguments?.getString("FireBaseLink")
 
         binding.btnPubg.setOnClickListener {
             val transaction: FragmentTransaction =
