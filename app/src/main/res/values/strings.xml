@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Games lifehacks</string>
+
+    <string name="facebook_app_id">181856197919996</string>
+    <string name="fb_login_protocol_scheme">fb181856197919996</string>
+    <string name="facebook_client_token">ff93b10ce2e2c3094c72dcd48dcb12aa </string>
+    <string name="facebook_hashkey">Bmce+9aHdOoVtE7fS3B07tfj7Bc=
+ </string>
+
     <string name="pubg">PUBG</string>
     <string name="brawl">Brawl Stars</string>
     <string name="genshin">Genshin Impact</string>

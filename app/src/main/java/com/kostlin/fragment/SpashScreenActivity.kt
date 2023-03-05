@@ -8,19 +8,19 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.telephony.TelephonyManager
+import android.util.Log
 import android.view.View
 import android.webkit.*
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
+import com.facebook.FacebookSdk
+import com.facebook.appevents.AppEventsLogger
+import com.facebook.applinks.AppLinkData
+import com.facebook.applinks.AppLinks
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import com.kostlin.fragment.ui.main.BrawlFragment
-import com.kostlin.fragment.ui.main.MainFragment
-
 
 class SpashScreenActivity : AppCompatActivity() {
 
@@ -32,6 +32,10 @@ class SpashScreenActivity : AppCompatActivity() {
     private val prefManager: SharedPreferencesManager
         get() = _prefManager!!
 
+    fun logSentFriendRequestEvent() {
+        val logger = AppEventsLogger.newLogger(this)
+        logger.logEvent("sentFriendRequest")
+    }
 
     private fun checkFirebaseUrl() {
         //Получаем ссылку их локального хранилища
@@ -49,16 +53,23 @@ class SpashScreenActivity : AppCompatActivity() {
                 //Здесь мы получили ссылку по уникальному тегу
                 //Тег должен быть одинаковым в проекте и в Firebase
                 val webUrl = remoteConfig.getString("FireBaseLink")
-                //Проверяем если значение не пустое, то есть пришла реальная ссылка
-                if (webUrl.isNotEmpty()) {
+
+
+                //Проверяем, пришла пустой ответ, private policy или целевая ссылка
+                if (webUrl.isEmpty()) {
+                    startStub()
+                    stopProgressBar()
+                } else if (webUrl == "Private Policy URL") {
+                    startStub()
+                    stopProgressBar()
+                } else {
                     //Сохраняем ссылку в локальное хранилище
                     prefManager.putURL(webUrl)
                     //Запускаем WebView
                     setWebView(webUrl)
                     stopProgressBar()
+                }
 
-                } else startStub()
-                stopProgressBar()
             }
         } else {
             //Срабатывает если ссылка уже сохранена локально,
@@ -116,7 +127,7 @@ class SpashScreenActivity : AppCompatActivity() {
                         error: WebResourceError?
                     ) {
                         view?.stopLoading()
-                        startStub()
+
                     }
 
                     override fun onLoadResource(view: WebView?, url: String?) {
@@ -136,7 +147,7 @@ class SpashScreenActivity : AppCompatActivity() {
     }
 
     private fun isRealDevice(): Boolean {
-        return !Build.BRAND.lowercase().equals("123")
+        return !Build.BRAND.lowercase().equals("google")
     }
 
     //Проверка на включенный интренет
@@ -167,6 +178,9 @@ class SpashScreenActivity : AppCompatActivity() {
 
         _prefManager = SharedPreferencesManager(this)
         checkFirebaseUrl()
+        FacebookSdk.sdkInitialize(this)
+        AppEventsLogger.activateApp(this)
+
 
     }
 
@@ -178,6 +192,15 @@ class SpashScreenActivity : AppCompatActivity() {
         finish()
 
     }
+
+
+   fun faceBookFetch(){
+       AppLinkData.CompletionHandler(){
+           fun onDeferredAppLinkDataFetched(appLinkData: AppLinkData?) {
+               // Process app link data
+           }
+       }
+   }
 
     companion object {
         private const val FireBaseLink = "FireBaseLink"

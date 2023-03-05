@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         setContentView(layout.activity_main)
         supportActionBar?.hide()
 
-
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, MainFragment())
             .commit()
