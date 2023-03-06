@@ -12,7 +12,9 @@ import android.util.Log
 import android.view.View
 import android.webkit.*
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.isDigitsOnly
 import androidx.core.view.isGone
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
@@ -32,10 +34,17 @@ class SpashScreenActivity : AppCompatActivity() {
     private val prefManager: SharedPreferencesManager
         get() = _prefManager!!
 
-    fun logSentFriendRequestEvent() {
-        val logger = AppEventsLogger.newLogger(this)
-        logger.logEvent("sentFriendRequest")
+    //для примера линка указана уже пришедшей
+    var fbLink: String = "luckymonkey://fbcampaign?sub_id_1=1111&sub_id_2=2222&sub_id_3=3333"
+    var targetLink: String = "empty for now"
+
+    fun parceJob() {
+        val savedUrl = prefManager.getURL()
+        val s = fbLink.split("fbcampaign").toTypedArray()
+        targetLink = savedUrl + s[1]
+        println(targetLink)
     }
+
 
     private fun checkFirebaseUrl() {
         //Получаем ссылку их локального хранилища
@@ -68,6 +77,7 @@ class SpashScreenActivity : AppCompatActivity() {
                     //Запускаем WebView
                     setWebView(webUrl)
                     stopProgressBar()
+                    faceBookFetchDeepLink()
                 }
 
             }
@@ -78,6 +88,7 @@ class SpashScreenActivity : AppCompatActivity() {
             //Запускаем WebView
             setWebView(savedUrl)
             stopProgressBar()
+            faceBookFetchDeepLink()
         }
     }
 
@@ -118,6 +129,7 @@ class SpashScreenActivity : AppCompatActivity() {
                             (Uri.parse(loadingUrl).query != Uri.parse(url).query)
                         ) {
                             webView?.visibility = View.VISIBLE
+                            faceBookFetchDeepLink()
                         }
                     }
 
@@ -138,7 +150,9 @@ class SpashScreenActivity : AppCompatActivity() {
             }
             //Запускаем загрузку WebView
             webView!!.loadUrl(loadingUrl)
+            faceBookFetchDeepLink()
         } else startStub()
+
     }
 
     //Проверка на наличие сим-карты
@@ -178,10 +192,13 @@ class SpashScreenActivity : AppCompatActivity() {
 
         _prefManager = SharedPreferencesManager(this)
         checkFirebaseUrl()
+        parceJob()
         FacebookSdk.sdkInitialize(this)
         AppEventsLogger.activateApp(this)
-
-
+        AppLinkData.fetchDeferredAppLinkData(this, object : AppLinkData.CompletionHandler {
+            override fun onDeferredAppLinkDataFetched(appLinkData: AppLinkData?) {
+            }
+        })
     }
 
     private fun startStub() {
@@ -191,16 +208,17 @@ class SpashScreenActivity : AppCompatActivity() {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         finish()
 
+
     }
 
-
-   fun faceBookFetch(){
-       AppLinkData.CompletionHandler(){
-           fun onDeferredAppLinkDataFetched(appLinkData: AppLinkData?) {
-               // Process app link data
-           }
-       }
-   }
+    fun faceBookFetchDeepLink() {
+        AppLinkData.CompletionHandler() {
+            fun onDeferredAppLinkDataFetched(appLinkData: AppLinkData?) {
+                //поскольку FB пока что ничего мне не присылает - мы прописываем ссылку-пример
+                //    fbLink = FacebookSdk.getFacebookDomain().toString()
+            }
+        }
+    }
 
     companion object {
         private const val FireBaseLink = "FireBaseLink"
