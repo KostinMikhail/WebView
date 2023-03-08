@@ -12,17 +12,20 @@ import android.util.Log
 import android.view.View
 import android.webkit.*
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.text.isDigitsOnly
 import androidx.core.view.isGone
+import com.appsflyer.AppsFlyerLib
+import com.appsflyer.attribution.AppsFlyerRequestListener
+import com.appsflyer.deeplink.DeepLink
+import com.appsflyer.deeplink.DeepLinkListener
+import com.appsflyer.deeplink.DeepLinkResult
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.applinks.AppLinkData
-import com.facebook.applinks.AppLinks
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+
 
 class SpashScreenActivity : AppCompatActivity() {
 
@@ -42,9 +45,7 @@ class SpashScreenActivity : AppCompatActivity() {
         val savedUrl = prefManager.getURL()
         val s = fbLink.split("fbcampaign").toTypedArray()
         targetLink = savedUrl + s[1]
-        println(targetLink)
     }
-
 
     private fun checkFirebaseUrl() {
         //Получаем ссылку их локального хранилища
@@ -186,6 +187,7 @@ class SpashScreenActivity : AppCompatActivity() {
         return false
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_spashscreen)
@@ -193,12 +195,74 @@ class SpashScreenActivity : AppCompatActivity() {
         _prefManager = SharedPreferencesManager(this)
         checkFirebaseUrl()
         parceJob()
+
+
+        AppsFlyerLib.getInstance().subscribeForDeepLink(object : DeepLinkListener {
+            override fun onDeepLinking(deepLinkResult: DeepLinkResult) {
+                when (deepLinkResult.status) {
+                    DeepLinkResult.Status.FOUND -> {
+                        val deepLink = deepLinkResult.deepLink
+                        Log.d(
+                            "aps", "Deep link found"
+                        )
+                    }
+                    DeepLinkResult.Status.NOT_FOUND -> {
+                        Log.d(
+                            "aps", "Deep link not found"
+                        )
+                        return
+                    }
+                    else -> {
+                        // dlStatus == DeepLinkResult.Status.ERROR
+                        val dlError = deepLinkResult.error
+                        Log.d(
+                            "aps", "There was an error getting Deep Link data: $dlError"
+                        )
+                        return
+                    }
+                }
+                val deepLinkObj: DeepLink = deepLinkResult.deepLink
+                try {
+                    Log.d(
+                        "aps", "The DeepLink data is: $deepLinkObj"
+                    )
+                } catch (e: Exception) {
+                    Log.d(
+                        "aps", "DeepLink data came back null"
+                    )
+                    return
+                }
+
+                if (deepLinkObj.isDeferred == true) {
+                    Log.d("aps", "This is a deferred deep link");
+                } else {
+                    Log.d("aps", "This is a direct deep link");
+                }
+
+                try {
+                    val fruitName = deepLinkObj.deepLinkValue
+                    Log.d("aps", "The DeepLink will route to: $fruitName")
+                } catch (e: Exception) {
+                    Log.d("aps", "There's been an error: $e");
+                    return;
+                }
+            }
+
+
+        })
+
         FacebookSdk.sdkInitialize(this)
         AppEventsLogger.activateApp(this)
         AppLinkData.fetchDeferredAppLinkData(this, object : AppLinkData.CompletionHandler {
             override fun onDeferredAppLinkDataFetched(appLinkData: AppLinkData?) {
             }
         })
+
+    }
+
+    private fun getDeepLink(deepLink: DeepLink?) {
+        val campaign = deepLink?.campaign
+        val campaignId = deepLink?.campaignId
     }
 
     private fun startStub() {

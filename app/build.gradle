@@ -60,4 +60,9 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     implementation 'com.facebook.android:facebook-applinks:[4,5)'
 
+    implementation 'com.appsflyer:af-android-sdk:6.10.0'
+    implementation "com.android.installreferrer:installreferrer:2.2"
+
+    implementation 'com.onesignal:OneSignal:[4.0.0, 4.99.99]'
+
 }
