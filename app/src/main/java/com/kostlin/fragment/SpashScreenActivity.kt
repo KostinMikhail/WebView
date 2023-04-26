@@ -15,7 +15,6 @@ import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import com.appsflyer.AppsFlyerLib
-import com.appsflyer.attribution.AppsFlyerRequestListener
 import com.appsflyer.deeplink.DeepLink
 import com.appsflyer.deeplink.DeepLinkListener
 import com.appsflyer.deeplink.DeepLinkResult
@@ -162,7 +161,11 @@ class SpashScreenActivity : AppCompatActivity() {
     }
 
     private fun isRealDevice(): Boolean {
-        return !Build.BRAND.lowercase().equals("google")
+        return Build.FINGERPRINT.startsWith("generic") ||
+                Build.FINGERPRINT.startsWith("unknown") ||
+                Build.MODEL.contains("google_sdk") ||
+                Build.MODEL.contains("Emulator") ||
+                Build.MODEL.contains("Android SDK built for x86")
     }
 
     //Проверка на включенный интренет
@@ -213,7 +216,6 @@ class SpashScreenActivity : AppCompatActivity() {
                         return
                     }
                     else -> {
-                        // dlStatus == DeepLinkResult.Status.ERROR
                         val dlError = deepLinkResult.error
                         Log.d(
                             "aps", "There was an error getting Deep Link data: $dlError"
@@ -271,20 +273,18 @@ class SpashScreenActivity : AppCompatActivity() {
         startActivity(intent)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         finish()
-
-
     }
 
     fun faceBookFetchDeepLink() {
         AppLinkData.CompletionHandler() {
             fun onDeferredAppLinkDataFetched(appLinkData: AppLinkData?) {
                 //поскольку FB пока что ничего мне не присылает - мы прописываем ссылку-пример
-                //    fbLink = FacebookSdk.getFacebookDomain().toString()
+                    fbLink = FacebookSdk.getFacebookDomain().toString()
             }
         }
     }
 
     companion object {
-        private const val FireBaseLink = "FireBaseLink"
+        const val FIREBASE_URL_TAG = "FireBaseLink"
     }
 }

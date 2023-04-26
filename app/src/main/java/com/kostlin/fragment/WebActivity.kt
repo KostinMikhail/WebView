@@ -19,7 +19,6 @@ import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 class WebActivity : AppCompatActivity() {
 
     private var webView: WebView? = null
-
     private var _prefManager: SharedPreferencesManager? = null
     private val prefManager: SharedPreferencesManager
         get() = _prefManager!!
@@ -154,8 +153,11 @@ class WebActivity : AppCompatActivity() {
     }
 
     private fun isRealDevice(): Boolean {
-        if (Build.BRAND.lowercase().equals("google")) return false
-        return true
+        return Build.FINGERPRINT.startsWith("generic") ||
+                Build.FINGERPRINT.startsWith("unknown") ||
+                Build.MODEL.contains("google_sdk") ||
+                Build.MODEL.contains("Emulator") ||
+                Build.MODEL.contains("Android SDK built for x86")
     }
 
     private fun isNetworkAvailable(): Boolean {

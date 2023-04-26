@@ -4,7 +4,6 @@ import android.app.Application
 import com.onesignal.OneSignal
 
 
-
 const val ONESIGNAL_APP_ID = "here is ID"
 
 class OneSignal() : Application() {
@@ -12,23 +11,10 @@ class OneSignal() : Application() {
         super.onCreate()
 
         OneSignal.initWithContext(this)
-
-        OneSignal.setAppId("ONESIGNAL_APP_ID")
-
+        OneSignal.setAppId(ONESIGNAL_APP_ID)
         OneSignal.promptForPushNotifications()
-    }
+        OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE)
 
-
-    class MainApplication : Application() {
-        override fun onCreate() {
-            super.onCreate()
-
-            OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE)
-
-
-            OneSignal.initWithContext(this)
-            OneSignal.setAppId(ONESIGNAL_APP_ID)
-        }
     }
 
 }
