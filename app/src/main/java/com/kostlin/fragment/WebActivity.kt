@@ -7,7 +7,6 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-
 import android.telephony.TelephonyManager
 import android.view.View
 import android.webkit.*
@@ -144,7 +143,7 @@ class WebActivity : AppCompatActivity() {
                 }
             }
             //Запускаем загрузку WebView
-            webView!!.loadUrl(loadingUrl)
+            webView?.loadUrl(loadingUrl)
         } else startStub()
     }
 

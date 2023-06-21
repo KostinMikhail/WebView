@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.View
 import android.webkit.*
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import com.appsflyer.AppsFlyerLib
@@ -31,13 +32,14 @@ class SpashScreenActivity : AppCompatActivity() {
 
     private var progressBar: ProgressBar? = null
     private var webView: WebView? = null
+    private var textView: TextView? = null
 
     private var _prefManager: SharedPreferencesManager? = null
     private val prefManager: SharedPreferencesManager
         get() = _prefManager!!
 
     //для примера линка указана уже пришедшей
-    var fbLink: String = "luckymonkey://fbcampaign?sub_id_1=1111&sub_id_2=2222&sub_id_3=3333"
+    var fbLink: String = "empty for now"
     var targetLink: String = "empty for now"
 
     fun parceJob() {
@@ -62,21 +64,22 @@ class SpashScreenActivity : AppCompatActivity() {
                 //Здесь мы получили ссылку по уникальному тегу
                 //Тег должен быть одинаковым в проекте и в Firebase
                 val webUrl = remoteConfig.getString("FireBaseLink")
-
-
                 //Проверяем, пришла пустой ответ, private policy или целевая ссылка
                 if (webUrl.isEmpty()) {
                     startStub()
                     stopProgressBar()
+                    stopTextView()
                 } else if (webUrl == "Private Policy URL") {
                     startStub()
                     stopProgressBar()
+                    stopTextView()
                 } else {
                     //Сохраняем ссылку в локальное хранилище
                     prefManager.putURL(webUrl)
                     //Запускаем WebView
                     setWebView(webUrl)
                     stopProgressBar()
+                    stopTextView()
                     faceBookFetchDeepLink()
                 }
 
@@ -86,15 +89,24 @@ class SpashScreenActivity : AppCompatActivity() {
             //чтобы не делать повторные запросы в FirebaseRemote
 
             //Запускаем WebView
-            setWebView(savedUrl)
+           // setWebView(savedUrl)
             stopProgressBar()
+            stopTextView()
             faceBookFetchDeepLink()
+            startStub()
+
+
+
         }
     }
 
     private fun stopProgressBar() {
         progressBar = findViewById(R.id.pb)
         progressBar?.isGone = true
+    }
+    private fun stopTextView() {
+        textView = findViewById(R.id.tv)
+        textView?.isGone = true
     }
 
     private fun setWebView(loadingUrl: String) {
@@ -190,7 +202,6 @@ class SpashScreenActivity : AppCompatActivity() {
         return false
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_spashscreen)
@@ -278,7 +289,7 @@ class SpashScreenActivity : AppCompatActivity() {
     fun faceBookFetchDeepLink() {
         AppLinkData.CompletionHandler() {
             fun onDeferredAppLinkDataFetched(appLinkData: AppLinkData?) {
-                //поскольку FB пока что ничего мне не присылает - мы прописываем ссылку-пример
+                //поскольку FB пока что ничего сюда не присылает - мы прописываем ссылку-пример
                     fbLink = FacebookSdk.getFacebookDomain().toString()
             }
         }

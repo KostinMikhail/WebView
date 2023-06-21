@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Games lifehacks</string>
+    <string name="app_name">Sport Game</string>
 
     <string name="facebook_app_id">181856197919996</string>
     <string name="fb_login_protocol_scheme">fb181856197919996</string>
@@ -59,4 +59,5 @@
         \nUse and make striped candy the right way
         \nPrioritize specific threats at each level
     </string>
+    <string name="loading">Loading</string>
 </resources>

@@ -5,76 +5,74 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.kostlin.fragment.R
-import com.kostlin.fragment.databinding.FragmentMainBinding
+import com.kostlin.fragment.model.Match
+import com.kostlin.fragment.model.MatchesAdapter
+import com.kostlin.fragment.model.MatchesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.json.JSONObject
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
-class MainFragment : Fragment(R.layout.fragment_main) {
+class MainFragment : Fragment() {
 
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
-
-    companion object {
-        fun newInstance() = MainFragment()
-    }
+    private lateinit var matchesRecyclerView: RecyclerView
+    private lateinit var matchesAdapter: MatchesAdapter
+    private var matchList: List<Match> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_main, container, false)
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        return root
+        return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnPubg.setOnClickListener {
-            val transaction: FragmentTransaction =
-                requireActivity().supportFragmentManager.beginTransaction()
-            transaction.add(R.id.container, PubgFragment.newInstance())
-            transaction.commit()
+        matchesRecyclerView = view.findViewById(R.id.matchesRecyclerView)
+        matchesRecyclerView.layoutManager = LinearLayoutManager(activity)
 
-        }
-        binding.btnBrawlStars.setOnClickListener {
-            val transaction: FragmentTransaction =
-                requireActivity().supportFragmentManager.beginTransaction()
-            transaction.add(R.id.container, BrawlFragment.newInstance())
-            transaction.commit()
-        }
+        matchesAdapter = MatchesAdapter(matchList)
+        matchesRecyclerView.adapter = matchesAdapter
 
-        binding.btnClashRoyal.setOnClickListener {
-            val transaction: FragmentTransaction =
-                requireActivity().supportFragmentManager.beginTransaction()
-            transaction.add(R.id.container, ClashFragment.newInstance())
-            transaction.commit()
-        }
-
-        binding.btnHomescapes.setOnClickListener {
-            val transaction: FragmentTransaction =
-                requireActivity().supportFragmentManager.beginTransaction()
-            transaction.add(R.id.container, HomescapesFragment.newInstance())
-            transaction.commit()
-        }
-
-        binding.btnGenshin.setOnClickListener {
-            val transaction: FragmentTransaction =
-                requireActivity().supportFragmentManager.beginTransaction()
-            transaction.add(R.id.container, GenshinFragment.newInstance())
-            transaction.commit()
-        }
-
-        binding.btnCandy.setOnClickListener {
-            val transaction: FragmentTransaction =
-                requireActivity().supportFragmentManager.beginTransaction()
-            transaction.add(R.id.container, CandyFragment.newInstance())
-            transaction.commit()
-        }
-
+        fetchMatches()
     }
+    val retrofit = Retrofit.Builder()
+        .baseUrl("https://api.sportsdata.io")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
+    val matchesApi = retrofit.create(MatchesApi::class.java)
+
+    private fun fetchMatches() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                // Выполняем запрос на сервер через Retrofit
+                val matches = matchesApi.getMatches()
+
+                // Обновляем список матчей в адаптере и уведомляем его об изменениях
+                withContext(Dispatchers.Main) {
+                    matchesAdapter.matchList = matches
+                    matchesAdapter.notifyDataSetChanged()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }
